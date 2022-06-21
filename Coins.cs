@@ -16,6 +16,6 @@ public class Coins : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Physics.gravity = new Vector3(0.0f, -Mathf.Pow(2, Time.time/3), 0.0f);
+        //Physics.gravity = new Vector3(0.0f, -Mathf.Pow(2, Time.time/3), 0.0f);
     }
 }
