@@ -37,9 +37,11 @@ public class ExperimentController : MonoBehaviour
     #endregion
     // :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     // list of agents that disappear in each trial..................................................................................
-    float[,,] testParams=new float[,,]{{{5,2,1,6,3,4},{ 1, 2, 4,5, 3, 6 },{ 2,4,3, 6, 5, 1 }, { 1, 2, 5, 6, 3, 4 }, { 1, 2, 4, 5, 3, 6 }, { 2, 4, 3, 6, 5, 1 } , { 1, 2, 5, 6, 3, 4 }, { 1, 2, 4, 5, 3, 6 }, { 2, 4, 3, 6, 5, 1 } , { 1, 2, 5, 6, 3, 4 }, { 1, 2, 4, 5, 3, 6 }, { 2, 4, 3, 6, 5, 1 } }, { { 0, 0, 1.05f, 1.2f, 1.21f, 2f }, { 0, 0, 0, 0, 1.21f, 2f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f }, { 0, 0, 0, 0, 1.21f, 2f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f }, { 0, 0, 0, 0, 1.21f, 2f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f }, { 0, 0, 0, 0, 1.21f, 2f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f } },{ { 0, 0, 1, 1, 1, 2 }, { 0, 0, 0, 0, 1, 2 }, { 0, 2,2, 1, 1, 2 }, { 0, 0, 1, 1, 1, 2 }, { 0, 0, 0, 0, 1, 2 }, { 0, 2, 2, 1, 1, 2 }, { 0, 0, 1, 1, 1, 2 }, { 0, 0, 0, 0, 1, 2 }, { 0, 2, 2, 1, 1, 2 }, { 0, 0, 1, 1, 1, 2 }, { 0, 0, 0, 0, 1, 2 }, { 0, 2, 2, 1, 1, 2 } } };
+    // in testParams, the first set is the number of the target agent, the second set is the time of the events, and the third set indicates the corresponding action
+    float[,,] testParams=new float[,,]{{{5,2,1,6,3,4,0},{ 1, 2, 4,5, 3, 6,0 },{ 2,4,3, 6, 5, 1,0 }, { 1, 2, 5, 6, 3, 4,0 }, { 1, 2, 4, 5, 3, 6,0 }, { 2, 4, 3, 6, 5, 1,0 } , { 1, 2, 5, 6, 3, 4,0 }, { 1, 2, 4, 5, 3, 6,0 }, { 2, 4, 3, 6, 5, 1,0 } , { 1, 2, 5, 6, 3, 4,0 }, { 1, 2, 4, 5, 3, 6,0 }, { 2, 4, 3, 6, 5, 1,0 } }, { { 0, 0, 0.5f, 1.2f, 2.5f, 3.5f,10f }, { 0, 0, 0, 0, 1.21f, 2f, 10f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f, 10f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f, 10f }, { 0, 0, 0, 0, 1.21f, 2f, 10f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f, 10f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f, 10f }, { 0, 0, 0, 0, 1.21f, 2f, 10f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f, 10f }, { 0, 0, 1.05f, 1.2f, 1.21f, 2f, 10f }, { 0, 0, 0, 0, 1.21f, 2f, 10f }, { 0, 1f, 1.05f, 1.12f, 1.22f, 2.1f, 10f } },{ { 0, 0, 1, 1, 1, 2,0 }, { 0, 0, 0, 0, 1, 2, 0 }, { 0, 2,2, 1, 1, 2, 0 }, { 0, 0, 1, 1, 1, 2, 0 }, { 0, 0, 0, 0, 1, 2, 0 }, { 0, 2, 2, 1, 1, 2, 0 }, { 0, 0, 1, 1, 1, 2, 0 }, { 0, 0, 0, 0, 1, 2, 0 }, { 0, 2, 2, 1, 1, 2, 0 }, { 0, 0, 1, 1, 1, 2, 0 }, { 0, 0, 0, 0, 1, 2, 0 }, { 0, 2, 2, 1, 1, 2, 0 } } };
     public float startTime;
-    public float refTime;
+    public float refTime1;
+    public float refTime2;
     public int trialTrigger;
 
 
@@ -49,14 +51,8 @@ public class ExperimentController : MonoBehaviour
     void Start()
     {
         Rb = coin.GetComponent<Rigidbody>();
-        Coroutine a = StartCoroutine(delayBetweenTrials());
-
-
-        currentSize = new Vector3(.0f, .0f, .0f);
-        currentSize = BalloonP.transform.localScale;
-        // deactivatie particle system at the beginning
-        ParticleSystem.EmissionModule emi = GetComponent<ParticleSystem>().emission;
-        print("Horaaaaaaaaaaaaaaaaaaaa");
+        Coroutine a = StartCoroutine(delayBetweenTrials());     // all the important things happen in this coroutine
+        ParticleSystem.EmissionModule emi = GetComponent<ParticleSystem>().emission;    // deactivate particle system at the beginning of experiment
         emi.enabled = false;
     }
 
@@ -76,150 +72,19 @@ public class ExperimentController : MonoBehaviour
     }
 
 
-
-
-    #region loop over trials (TN: trial number, AN= agent number)
-    void TrialsLoop(int TN, int AN)
-    {
-        //Rb.AddForce(new Vector3(0, 0, 0));
-        startTime = Time.time;
-        #region agents disappearing approach
-        // at the beginning of each trial set all the agents active ................................................................
-        //M01.SetActive(true);
-        //M02.SetActive(true);
-        //M03.SetActive(true);
-        //F01.SetActive(true);
-        //F02.SetActive(true);
-        //F03.SetActive(true);
-        //..........................................................................................................................
-        // determine which agent/agents must be deactivated at each trial ..........................................................
-        //if (inactiveAgents[0, TN, 0] == 1 || inactiveAgents[0, TN, 1] == 1 || inactiveAgents[0, TN, 2] == 1)
-        //    M01.SetActive(false); // hide first male agent
-        //if (inactiveAgents[0, TN, 0] == 2 || inactiveAgents[0, TN, 1] == 2 || inactiveAgents[0, TN, 2] == 2)
-        //    M02.SetActive(false); // hide second male agent
-        //if (inactiveAgents[0, TN, 0] == 3 || inactiveAgents[0, TN, 1] == 3 || inactiveAgents[0, TN, 2] == 3)
-        //    M03.SetActive(false); // hide third male agent
-        //if (inactiveAgents[0, TN, 0] == 4 || inactiveAgents[0, TN, 1] == 4 || inactiveAgents[0, TN, 2] == 4)
-        //    F01.SetActive(false); // hide first female agent
-        //if (inactiveAgents[0, TN, 0] == 5 || inactiveAgents[0, TN, 1] == 5 || inactiveAgents[0, TN, 2] == 5)
-        //    F02.SetActive(false); // hide second female agent
-        //if (inactiveAgents[0, TN, 0] == 6 || inactiveAgents[0, TN, 1] == 6 || inactiveAgents[0, TN, 2] == 6)
-        //    F03.SetActive(false); // hide third female agent
-        #endregion
-        //..........................................................................................................................
-        #region agents remain idle approach
-        // determine which agent/agents are active at each trial ...................................................................
-        //fAnimator1 = F01.GetComponent<Animator>();
-        //fAnimator2 = F02.GetComponent<Animator>();
-        //fAnimator3 = F03.GetComponent<Animator>();
-        //mAnimator1 = M01.GetComponent<Animator>();
-        //mAnimator2 = M02.GetComponent<Animator>();
-        //mAnimator3 = M03.GetComponent<Animator>();
-
-        print("burstFactor: "+ testParams[2, TN, AN]);
-        //if (testParams[2, TN, AN] == 1)
-        //{
-        //    switch (testParams[0, TN, AN])
-        //    {
-        //        case 1:
-        //            print("fAnimator1B");
-        //            fAnimator1.SetInteger("Burst", 1);
-        //            fAnimator2.SetInteger("Burst", 2);
-        //            fAnimator3.SetInteger("Burst", 2);
-        //            mAnimator1.SetInteger("Burst", 2);
-        //            mAnimator2.SetInteger("Burst", 2);
-        //            mAnimator3.SetInteger("Burst", 2);
-        //            break;
-        //        case 2:
-        //            print("fAnimator2B");
-        //            fAnimator1.SetInteger("Burst", 3);
-        //            fAnimator2.SetInteger("Burst", 1);
-        //            fAnimator3.SetInteger("Burst", 2);
-        //            mAnimator1.SetInteger("Burst", 2);
-        //            mAnimator2.SetInteger("Burst", 2);
-        //            mAnimator3.SetInteger("Burst", 2);
-        //            break;
-        //        case 3:
-        //            print("fAnimator3B");
-        //            fAnimator1.SetInteger("Burst", 3);
-        //            fAnimator2.SetInteger("Burst", 3);
-        //            fAnimator3.SetInteger("Burst", 1);
-        //            mAnimator1.SetInteger("Burst", 3);
-        //            mAnimator2.SetInteger("Burst", 2);
-        //            mAnimator3.SetInteger("Burst", 2);
-        //            break;
-        //        case 4:
-        //            print("mAnimator1B");
-        //            fAnimator1.SetInteger("Burst", 3);
-        //            fAnimator2.SetInteger("Burst", 3);
-        //            fAnimator3.SetInteger("Burst", 2);
-        //            mAnimator1.SetInteger("Burst", 1);
-        //            mAnimator2.SetInteger("Burst", 2);
-        //            mAnimator3.SetInteger("Burst", 2);
-        //            break;
-        //        case 5:
-        //            print("mAnimator2B");
-        //            fAnimator1.SetInteger("Burst", 3);
-        //            fAnimator2.SetInteger("Burst", 3);
-        //            fAnimator3.SetInteger("Burst", 3);
-        //            mAnimator1.SetInteger("Burst", 3);
-        //            mAnimator2.SetInteger("Burst", 1);
-        //            mAnimator3.SetInteger("Burst", 2);
-        //            break;
-        //        case 6:
-        //            print("mAnimator3B");
-        //            fAnimator1.SetInteger("Burst", 3);
-        //            fAnimator2.SetInteger("Burst", 3);
-        //            fAnimator3.SetInteger("Burst", 3);
-        //            mAnimator1.SetInteger("Burst", 3);
-        //            mAnimator2.SetInteger("Burst", 3);
-        //            mAnimator3.SetInteger("Burst", 1);
-        //            break;
-        //    }
-        //}
-        //else if (testParams[2, TN, AN] == 2)
-        //{
-        //    switch (testParams[0, TN, AN])
-        //    {
-        //        case 1:
-        //            print("fAnimator1Q");
-        //            fAnimator1.SetInteger("Burst", 4);
-        //            break;
-        //        case 2:
-        //            print("fAnimator2Q");
-        //            fAnimator2.SetInteger("Burst", 4);
-        //            break;
-        //        case 3:
-        //            print("fAnimator3Q");
-        //            fAnimator3.SetInteger("Burst", 4);
-        //            break;
-        //        case 4:
-        //            print("mAnimator1Q");
-        //            mAnimator1.SetInteger("Burst", 4);
-        //            break;
-        //        case 5:
-        //            print("mAnimator2Q");
-        //            mAnimator2.SetInteger("Burst", 4);
-        //            break;
-        //        case 6:
-        //            print("mAnimator3Q");
-        //            mAnimator3.SetInteger("Burst", 4);
-        //            break;
-        //    }
-        //}
-        #endregion
-    }
-    #endregion
+// ***********************************************************************************************************************************
+// ***********************************************************************************************************************************
     IEnumerator delayBetweenTrials()
     {
         int trialCounter;
         int numberofTrials = 10;
         int AgentCounter;
-        int terminateFactor = 0;
+        int terminateFactor = 0;    // when the participant releases the space key, the experiment terminates
 
         ParticleSystem.EmissionModule emi = GetComponent<ParticleSystem>().emission;
-        scaleChange = new Vector3(.0015f, .0015f, .0015f);
+        scaleChange = new Vector3(.015f, .015f, .015f);
 
+        // introducing animators .....................................................................................................
         fAnimator1 = F01.GetComponent<Animator>();
         fAnimator2 = F02.GetComponent<Animator>();
         fAnimator3 = F03.GetComponent<Animator>();
@@ -227,10 +92,10 @@ public class ExperimentController : MonoBehaviour
         mAnimator2 = M02.GetComponent<Animator>();
         mAnimator3 = M03.GetComponent<Animator>();
 
-
-
+        #region loop on trials 
         for (trialCounter = 0; trialCounter < numberofTrials; trialCounter++)
         {
+            // set the position of agents at the beginning of each trial. It is necessary because in some trials, when the balloon bursts, the participant gets too shocked and takes one step back!
             F01.transform.position = new Vector3(50.079f, 0f, -41.635f);
             F02.transform.position = new Vector3(49.32f, 0f, -41.753f);
             F03.transform.position = new Vector3(47.61678f, 0f, -40.59851f);
@@ -238,17 +103,18 @@ public class ExperimentController : MonoBehaviour
             M02.transform.position = new Vector3(47.41962f, 0f, -39.89147f);
             M03.transform.position = new Vector3(47.362f, 0f, -39.02863f);
 
+            // deactivate (disappear) all the balloons at the beginning of each trial
             BalloonAF01.SetActive(false);
             BalloonAF02.SetActive(false);
             BalloonAF03.SetActive(false);
             BalloonAM01.SetActive(false);
             BalloonAM02.SetActive(false);
             BalloonAM03.SetActive(false);
-            while ((Input.GetKey("space")))
-            {
-                yield return null;
-            }
-            FixImage.SetActive(true);
+
+            // **********************************************************************************************************************
+            BalloonP.SetActive(false);
+            FixImage.SetActive(true);   // at the beginning of each trial, show the fication image
+            // reset all the animators ..............................................................................................
             fAnimator1.Rebind();
             fAnimator2.Rebind();
             fAnimator3.Rebind();
@@ -257,22 +123,25 @@ public class ExperimentController : MonoBehaviour
             mAnimator3.Rebind();
             //fAnimator1.Update(0f);
 
-            yield return new WaitForSeconds(1.5f);      // show the fixation image for 1.5 seconds..................................
+            yield return new WaitForSeconds(1.5f);      // show the fixation image for 1.5 seconds ..................................
+            // after 1.5 seconds showing the fixation image, if still the participant is not pressing the space key, don't start the trial. Start if only the fixation image has been showed for 1.5 seconds, and also the participant holds the space key!
             while (!(Input.GetKey("space")))
             {
                 yield return null;
             }
-            FixImage.SetActive(false);
-            for (AgentCounter = 0; AgentCounter < 6; AgentCounter++)
+            FixImage.SetActive(false);  // deactivate the fixation image, so that the experimental environment is visible!
+            BalloonP.SetActive(true);
+            BalloonP.transform.localScale = new Vector3(.1f, .1f, .1f);
+            for (AgentCounter = 0; AgentCounter < 6; AgentCounter++)    // loop over agents to control them
             {
-                if (testParams[2, trialCounter, AgentCounter] != 0)
+                if (testParams[2, trialCounter, AgentCounter] != 0)     // check the third set of testparams to see if an action is required or not (1: burst, 2: quit, 0: nothing), in case of burst or quit, agent must start blowing anyway!
                 {
-                    print("Asiiiiiiiiiiiiiii"+testParams[0, trialCounter, AgentCounter]);
+                    //print("Asiiiiiiiiiiiiiii"+testParams[0, trialCounter, AgentCounter]);
                     switch (testParams[0, trialCounter, AgentCounter])
                     {
                         case 1:
                             print("F1 started!");
-                            fAnimator1.SetInteger("Start", 1);
+                            fAnimator1.SetInteger("Start", 1);  // after the agent starts blowing, wait for 0.2 seconds so that the agent has enough time to get the blowing posture, and then the balloon starts inflating
                             yield return new WaitForSeconds(.2f);
                             BalloonAF01.SetActive(true);
                             BalloonAF01.transform.localScale= new Vector3(.1f, .1f, .1f);
@@ -316,56 +185,56 @@ public class ExperimentController : MonoBehaviour
                 }
             }
 
-            refTime = Time.time;                        // save the time after idle phase at the beginning of each trial
+            currentSize = new Vector3(.1f, .1f, .1f);
+            refTime1 = Time.time;                        // save the time after idle phase at the beginning of each trial
             // after some agents started blowing in balloons, here we manage if some of them quit the experiment or their balloons burst before the participant stops!
-            for (AgentCounter = 0;AgentCounter<6;AgentCounter++)   // this loop is on agents to determine the role of each agent in each trial
+            for (AgentCounter = 0;AgentCounter<7;AgentCounter++)   // this loop is on agents to determine the role of each agent in each trial
             {
-                print("trialCounter: " + trialCounter + " , agentCounter: " + AgentCounter);
-                while ((Time.time - refTime) <= testParams[1, trialCounter, AgentCounter])
+                //print("trialCounter: " + trialCounter + " , agentCounter: " + AgentCounter);
+                // the strategy is to go for each time point that one of the agents is supposed to make a specific action, then continue to the next time point, and so on...
+                while ((Time.time - refTime1) <= testParams[1, trialCounter, AgentCounter])
                 {
-                    // Participant's balloon inflating .............................................................................
-                    if ((currentSize[1] < 5f) && (Input.GetKey("space")))
+                    print("time:"+(Time.time-refTime1)+"testParam:"+ testParams[1, trialCounter, AgentCounter]);
+                    if ((currentSize[1] < 5f) && (Input.GetKey("space")))   // if the participant's balloon is smaller than the currentSize, and the participant is holding the space key, then participant's balloon keeps inflating
                     {
                         BalloonP.transform.localScale += scaleChange;
-                        currentSize = new Vector3(Mathf.Log(BalloonP.transform.localScale[0], 2), BalloonP.transform.localScale[1], BalloonP.transform.localScale[2]);
-                        //print(currentSize[1]);
-                        refTime = Time.time;    // save the reference time for the balloon burst initiation
+                        currentSize = new Vector3(BalloonP.transform.localScale[0], BalloonP.transform.localScale[1], BalloonP.transform.localScale[2]);
+                        refTime2 = Time.time;    // save the reference time for the balloon burst initiation
                     }
-                    // when threshold is reached, activate particle system (simulating burst) for a glance (0.2 sec) and also deactivate disappear Balloon
-                    else if ((Input.GetKey("space")))
+                    // when threshold is reached, activate particle system (simulating burst) for a glance (0.2 sec) and also deactivate Balloon
+                    else if ((Input.GetKey("space")))   // participant is still holding the space key
                     {
-                        print("emmmmmmmmmmmmmmmmmmmmm");
                         emi.enabled = true;
-                        print("EMMMMMMMMMMM");
-                        if (Time.time >= refTime + 0.2)
+                        if (Time.time >= refTime2 + 0.2)
                         {
                             BalloonP.SetActive(false);
                             emi.enabled = false;
                         }
                     }
-
+                    // if the participant releases the space key, the trial is terminated
                     if (!(Input.GetKey("space")))
                     {
                         print("user terminated: "+ testParams[1, trialCounter, AgentCounter]);
                         terminateFactor = 1;
                         break;
                     }
-                    //print("Time: " + (Time.time - refTime));
-                    yield return new WaitForSeconds(0.00001f);
+                    yield return new WaitForSeconds(0.00001f);  // temporal resolution for updating the experiment!
                 }
-                if (terminateFactor==0)
+
+
+                if (terminateFactor==0)     // if the participant has not terminated the trial!
                 {
-                    if (testParams[2, trialCounter, AgentCounter] == 1)
+                    if (testParams[2, trialCounter, AgentCounter] == 1)     // look at the current third set of testParams which indicates the corresponding action (1: burst, 2: quit, 0: nothing)
                     {
                         switch (testParams[0, trialCounter, AgentCounter])
                         {
                             case 1:
-                                print("fAnimator1B");
                                 fAnimator1.SetInteger("Burst", 1);  // 1:Burst; 2:Look right; 3:Look left; 4: Quit
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAF01.SetActive(false);
+                                print("F1Burst");
                                 fAnimator2.SetInteger("Burst", 2);
                                 fAnimator3.SetInteger("Burst", 2);
                                 mAnimator1.SetInteger("Burst", 2);
@@ -373,68 +242,68 @@ public class ExperimentController : MonoBehaviour
                                 mAnimator3.SetInteger("Burst", 2);
                                 break;
                             case 2:
-                                print("fAnimator2B");
                                 fAnimator1.SetInteger("Burst", 3);
                                 fAnimator2.SetInteger("Burst", 1);
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAF02.SetActive(false);
+                                print("F2Burst");
                                 fAnimator3.SetInteger("Burst", 2);
                                 mAnimator1.SetInteger("Burst", 2);
                                 mAnimator2.SetInteger("Burst", 2);
                                 mAnimator3.SetInteger("Burst", 2);
                                 break;
                             case 3:
-                                print("fAnimator3B");
                                 fAnimator1.SetInteger("Burst", 3);
                                 fAnimator2.SetInteger("Burst", 3);
                                 fAnimator3.SetInteger("Burst", 1);
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAF03.SetActive(false);
+                                print("F3Burst");
                                 mAnimator1.SetInteger("Burst", 3);
                                 mAnimator2.SetInteger("Burst", 2);
                                 mAnimator3.SetInteger("Burst", 2);
                                 break;
                             case 4:
-                                print("mAnimator1B");
                                 fAnimator1.SetInteger("Burst", 3);
                                 fAnimator2.SetInteger("Burst", 3);
                                 fAnimator3.SetInteger("Burst", 2);
                                 mAnimator1.SetInteger("Burst", 1);
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAM01.SetActive(false);
+                                print("M1Burst");
                                 mAnimator2.SetInteger("Burst", 2);
                                 mAnimator3.SetInteger("Burst", 2);
                                 break;
                             case 5:
-                                print("mAnimator2B");
                                 fAnimator1.SetInteger("Burst", 3);
                                 fAnimator2.SetInteger("Burst", 3);
                                 fAnimator3.SetInteger("Burst", 3);
                                 mAnimator1.SetInteger("Burst", 3);
                                 mAnimator2.SetInteger("Burst", 1);
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAM02.SetActive(false);
+                                print("M2Burst");
                                 mAnimator3.SetInteger("Burst", 2);
                                 break;
                             case 6:
-                                print("mAnimator3B");
                                 fAnimator1.SetInteger("Burst", 3);
                                 fAnimator2.SetInteger("Burst", 3);
                                 fAnimator3.SetInteger("Burst", 3);
                                 mAnimator1.SetInteger("Burst", 3);
                                 mAnimator2.SetInteger("Burst", 3);
                                 mAnimator3.SetInteger("Burst", 1);
-                                particles.transform.position = new Vector3(49.3f, .0f, -40f);
-                                emi.enabled = true;
-                                yield return new WaitForSeconds(.2f);
+                                print("M3Burst");
+                                //particles.transform.position = new Vector3(49.3f, .0f, -40f);
+                                //emi.enabled = true;
+                                //yield return new WaitForSeconds(.2f);
                                 BalloonAM03.SetActive(false);
                                 break;
                         }
@@ -444,28 +313,34 @@ public class ExperimentController : MonoBehaviour
                         switch (testParams[0, trialCounter, AgentCounter])
                         {
                             case 1:
-                                print("fAnimator1Q");
+                                print("F1Quit");
                                 fAnimator1.SetInteger("Burst", 4);
+                                BalloonAF01.SetActive(false);
                                 break;
                             case 2:
-                                print("fAnimator2Q");
+                                print("F2Quit");
                                 fAnimator2.SetInteger("Burst", 4);
+                                BalloonAF02.SetActive(false);
                                 break;
                             case 3:
-                                print("fAnimator3Q");
+                                print("F3Quit");
                                 fAnimator3.SetInteger("Burst", 4);
+                                BalloonAF03.SetActive(false);
                                 break;
                             case 4:
-                                print("mAnimator1Q");
+                                print("M1Quit");
                                 mAnimator1.SetInteger("Burst", 4);
+                                BalloonAM01.SetActive(false);
                                 break;
                             case 5:
-                                print("mAnimator2Q");
+                                print("M2Quit");
                                 mAnimator2.SetInteger("Burst", 4);
+                                BalloonAM02.SetActive(false);
                                 break;
                             case 6:
-                                print("mAnimator3Q");
+                                print("M3Quit");
                                 mAnimator3.SetInteger("Burst", 4);
+                                BalloonAM03.SetActive(false);
                                 break;
                         }
                     }
@@ -477,11 +352,10 @@ public class ExperimentController : MonoBehaviour
                     mAnimator2.SetInteger("Burst", 0);
                     mAnimator3.SetInteger("Burst", 0);
                     
-                    TrialsLoop(trialCounter, AgentCounter);
-                    //trialTrigger = 1;
                 }
             }
         }
+        #endregion
         #region quit the experiment when all trials are completed
         if (trialCounter == numberofTrials)
         {
